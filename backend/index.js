@@ -21,7 +21,7 @@ app.set("trust proxy", true);
 
 morgan.token("remote-addr", (req) => req.headers["x-forwarded-for"] || req.socket.remoteAddress);
 app.use(morgan(":remote-addr :method :url :status :res[content-length] - :response-time ms"));
-
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());

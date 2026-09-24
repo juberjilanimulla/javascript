@@ -8,12 +8,27 @@ BEGIN
     ORDER BY created_at DESC;
 END$$
 
+DROP PROCEDURE IF EXISTS sp_login$$
+CREATE PROCEDURE sp_login(
+    IN p_email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+    IN p_password VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
+)
+BEGIN
+    SELECT id, name, email, password, mobile, role, is_active
+    FROM users
+    WHERE email = p_email COLLATE utf8mb4_0900_ai_ci
+      AND is_active = 1
+    LIMIT 1;
+END$$
+
 DROP PROCEDURE IF EXISTS sp_get_user_by_email$$
-CREATE PROCEDURE sp_get_user_by_email(IN p_email VARCHAR(255))
+CREATE PROCEDURE sp_get_user_by_email(
+    IN p_email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
+)
 BEGIN
     SELECT id, name, email, password, mobile, role, is_active, reset_token, reset_token_expires_at
     FROM users
-    WHERE email = p_email
+    WHERE email = p_email COLLATE utf8mb4_0900_ai_ci
     LIMIT 1;
 END$$
 
@@ -56,10 +71,10 @@ BEGIN
     SELECT p_id AS id;
 END$$
 
-DROP PROCEDURE IF EXISTS sp_set_reset_token$$
-CREATE PROCEDURE sp_set_reset_token(
-    IN p_email VARCHAR(255),
-    IN p_reset_token VARCHAR(255),
+DROP PROCEDURE IF EXISTS sp_forgot_password$$
+CREATE PROCEDURE sp_forgot_password(
+    IN p_email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+    IN p_reset_token VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
     IN p_expires_at DATETIME
 )
 BEGIN
@@ -67,7 +82,23 @@ BEGIN
     SET reset_token = p_reset_token,
         reset_token_expires_at = p_expires_at,
         updated_at = CURRENT_TIMESTAMP
-    WHERE email = p_email;
+    WHERE email = p_email COLLATE utf8mb4_0900_ai_ci;
+
+    SELECT ROW_COUNT() AS affected_rows;
+END$$
+
+DROP PROCEDURE IF EXISTS sp_set_reset_token$$
+CREATE PROCEDURE sp_set_reset_token(
+    IN p_email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+    IN p_reset_token VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+    IN p_expires_at DATETIME
+)
+BEGIN
+    UPDATE users
+    SET reset_token = p_reset_token,
+        reset_token_expires_at = p_expires_at,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE email = p_email COLLATE utf8mb4_0900_ai_ci;
 
     SELECT ROW_COUNT() AS affected_rows;
 END$$

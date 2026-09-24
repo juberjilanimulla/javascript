@@ -12,7 +12,7 @@ export async function login(req, res) {
     throw new ApiError(400, "Email and password are required");
   }
 
-  const [rows] = await pool.query("CALL sp_get_user_by_email(?)", [email]);
+  const [rows] = await pool.query("CALL sp_login(?, ?)", [email, password]);
   const user = rows?.[0]?.[0];
 
   if (!user) {
@@ -50,7 +50,7 @@ export async function forgotPassword(req, res) {
     const resetToken = crypto.randomBytes(32).toString("hex");
     const expires = new Date(Date.now() + 60 * 60 * 1000);
 
-    await pool.query("CALL sp_set_reset_token(?, ?, ?)", [email, resetToken, expires]);
+    await pool.query("CALL sp_forgot_password(?, ?, ?)", [email, resetToken, expires]);
     console.log(`[forgot-password] reset token for ${email}: ${resetToken}`);
   }
 
