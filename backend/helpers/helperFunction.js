@@ -67,6 +67,7 @@ export async function authMiddleware(request, response, next) {
 }
 
 export function bcryptPassword(password) {
+
     return bcrypt.hashSync(password, 10)
 }
 
