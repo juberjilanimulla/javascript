@@ -1,1 +1,18 @@
-DROP PROCEDURE IF EXISTS sp_create_user
+DROP PROCEDURE IF EXISTS sp_get_users;
+DROP PROCEDURE IF EXISTS sp_get_user_by_email;
+DROP PROCEDURE IF EXISTS sp_create_user;
+DROP PROCEDURE IF EXISTS sp_update_user;
+DROP PROCEDURE IF EXISTS sp_delete_user;
+DROP PROCEDURE IF EXISTS sp_set_reset_token;
+DROP PROCEDURE IF EXISTS sp_get_products;
+DROP PROCEDURE IF EXISTS sp_create_product;
+DROP PROCEDURE IF EXISTS sp_update_product;
+DROP PROCEDURE IF EXISTS sp_delete_product;
+DROP PROCEDURE IF EXISTS sp_get_orders;
+DROP PROCEDURE IF EXISTS sp_create_order;
+DROP PROCEDURE IF EXISTS sp_update_order;
+DROP PROCEDURE IF EXISTS sp_delete_order;
+
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS users;

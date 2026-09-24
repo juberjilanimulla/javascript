@@ -41,11 +41,6 @@ export default function Login() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
-
     // -----------------------------
     // Login
     // -----------------------------

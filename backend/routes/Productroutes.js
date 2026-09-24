@@ -7,13 +7,12 @@ import {
   deleteProduct,
 } from "../controllers/productController.js";
 
-const router = express.Router();
+const productRouter = express();
 
-router.use(authMiddleware);
+productRouter.use(authMiddleware);
+productRouter.get("/", getProducts);
+productRouter.post("/", createProduct);
+productRouter.put("/:id", updateProduct);
+productRouter.delete("/:id", deleteProduct);
 
-router.get("/", getProducts);
-router.post("/", createProduct);
-router.put("/:id", updateProduct);
-router.delete("/:id", deleteProduct);
-
-export default router;
+export default productRouter;

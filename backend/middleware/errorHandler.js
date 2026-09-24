@@ -1,17 +1,15 @@
 import ApiError from "../utils/apiError.js";
-import { errorResponse } from "../utils/response.js";
+import { errorResponse } from "../helpers/serverResponse.js";
 
 export const notFoundHandler = (req, res, next) => {
   next(ApiError.notFound(`Route ${req.originalUrl} not found`));
 };
 
-// 4-arg signature is required by Express
 const errorHandler = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || "Something went wrong";
   let data = err.data || null;
 
-  // MySQL → HTTP mapping
   if (err.code === "ER_DUP_ENTRY") {
     statusCode = 409;
     message = "Duplicate entry";

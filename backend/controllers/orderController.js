@@ -1,16 +1,13 @@
-import pool from "../DB/db.js";
-import asyncHandler from "../middleware/Authcontext.js";
+import { pool } from "../db.js";
 import ApiError from "../utils/apiError.js";
 import sendResponse from "../helpers/serverResponse.js";
+import asyncHandler from "../middleware/asyncHandler.js";
 
-// GET /api/orders
 export const getOrders = asyncHandler(async (req, res) => {
   const [rows] = await pool.query("CALL sp_get_orders()");
-  sendResponse(res, 200, "Orders fetched", rows[0]);
+  return sendResponse(res, 200, "Orders fetched", rows?.[0] || []);
 });
 
-// POST /api/orders
-// body: { userId, productId, quantity, status }
 export const createOrder = asyncHandler(async (req, res) => {
   const { userId, productId, quantity, status } = req.body;
 
@@ -25,11 +22,9 @@ export const createOrder = asyncHandler(async (req, res) => {
     status || "pending",
   ]);
 
-  sendResponse(res, 201, "Order created", { id: result[0][0].id });
+  return sendResponse(res, 201, "Order created", { id: result?.[0]?.[0]?.id || null });
 });
 
-// PUT /api/orders/:id
-// body: { userId, productId, quantity, status }
 export const updateOrder = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { userId, productId, quantity, status } = req.body;
@@ -46,12 +41,11 @@ export const updateOrder = asyncHandler(async (req, res) => {
     status || "pending",
   ]);
 
-  sendResponse(res, 200, "Order updated", { id: Number(id) });
+  return sendResponse(res, 200, "Order updated", { id: Number(id) });
 });
 
-// DELETE /api/orders/:id
 export const deleteOrder = asyncHandler(async (req, res) => {
   const { id } = req.params;
   await pool.query("CALL sp_delete_order(?)", [id]);
-  sendResponse(res, 200, "Order deleted", { id: Number(id) });
+  return sendResponse(res, 200, "Order deleted", { id: Number(id) });
 });
