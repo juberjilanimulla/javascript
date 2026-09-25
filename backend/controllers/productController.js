@@ -1,11 +1,10 @@
 import { pool } from "../db.js";
-import ApiError from "../utils/apiError.js";
-import sendResponse from "../helpers/serverResponse.js";
+import {successResponse,errorResponse} from "../helpers/serverResponse.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 
 export const getProducts = asyncHandler(async (req, res) => {
   const [rows] = await pool.query("CALL sp_get_products()");
-  return sendResponse(res, 200, "Products fetched", rows?.[0] || []);
+  return successResponse(res, 200, "Products fetched", rows?.[0] || []);
 });
 
 export const createProduct = asyncHandler(async (req, res) => {
@@ -21,7 +20,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     quantity || 0,
   ]);
 
-  return sendResponse(res, 201, "Product created", { id: result?.[0]?.[0]?.id || null });
+  return successResponse(res, 201, "Product created", { id: result?.[0]?.[0]?.id || null });
 });
 
 export const updateProduct = asyncHandler(async (req, res) => {
@@ -33,11 +32,11 @@ export const updateProduct = asyncHandler(async (req, res) => {
   }
 
   await pool.query("CALL sp_update_product(?, ?, ?, ?)", [id, name, price, quantity || 0]);
-  return sendResponse(res, 200, "Product updated", { id: Number(id) });
+  return successResponse(res, 200, "Product updated", { id: Number(id) });
 });
 
 export const deleteProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   await pool.query("CALL sp_delete_product(?)", [id]);
-  return sendResponse(res, 200, "Product deleted", { id: Number(id) });
+  return successResponse(res, 200, "Product deleted", { id: Number(id) });
 });

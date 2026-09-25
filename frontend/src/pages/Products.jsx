@@ -6,10 +6,10 @@ const emptyForm = { name: "", price: "", quantity: "" };
 
 export default function Products() {
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState(emptyForm);
-  const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [form, setForm] = useState(emptyForm);
+  const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
   const fetchProducts = async () => {
@@ -17,7 +17,7 @@ export default function Products() {
     setError("");
     try {
       const res = await api.get("/products");
-      setProducts(res.data.data);
+      setProducts(res.data.data.products || []);
     } catch (err) {
       setError("Failed to load products");
       console.error(err);

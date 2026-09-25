@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
 export default function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,58 +15,27 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccess("");
 
-    setError("");
-    setSuccess("");
+  if (!email.trim()) return setError("Please enter your email address.");
+  if (!/\S+@\S+\.\S+/.test(email)) return setError("Please enter a valid email address.");
+  if (!password) return setError("Please enter your password.");
 
-    // -----------------------------
-    // Validation
-    // -----------------------------
-
-    if (!email.trim()) {
-      setError("Please enter your email address.");
-      return;
-    }
-
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    if (!password) {
-      setError("Please enter your password.");
-      return;
-    }
-
-    // -----------------------------
-    // Login
-    // -----------------------------
-
-    try {
-      setLoading(true);
-
-      await login(email, password, rememberMe);
-
-      setSuccess("Login successful! Redirecting...");
-
-      setTimeout(() => {
-        navigate("/");
-      }, 500);
-    } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Invalid email or password."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    await login(email, password);
+    setSuccess("Login successful! Redirecting...");
+    setTimeout(() => navigate("/"), 500);
+  } catch (err) {
+    setError(err?.response?.data?.message || err?.message || "Invalid email or password.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-100">

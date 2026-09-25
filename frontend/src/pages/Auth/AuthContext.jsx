@@ -1,41 +1,55 @@
+// frontend/src/pages/Auth/AuthContext.jsx
 import { createContext, useContext, useState } from "react";
 import api from "../../api/axios";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("user");
-    return saved ? JSON.parse(saved) : null;
+    try {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    } catch {
+      return null;
+    }
   });
 
   const login = async (email, password) => {
     const res = await api.post("/auth/login", { email, password });
-    const { token: newToken, user: newUser } = res.data.data;
-    localStorage.setItem("token", newToken);
-    localStorage.setItem("user", JSON.stringify(newUser));
-    setToken(newToken);
-    setUser(newUser);
-    return newUser;
+    const u = res.data.data.user;
+    setUser(u);
+    localStorage.setItem("user", JSON.stringify(u));
+    return u;
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
+  const signup = async (name, email, password) => {
+    const res = await api.post("/auth/signup", { name, email, password });
+    const u = res.data.data.user;
+    setUser(u);
+    localStorage.setItem("user", JSON.stringify(u));
+    return u;
+  };
+
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch {}
     setUser(null);
+    localStorage.removeItem("user");
   };
-
-  const isAuthenticated = Boolean(token);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error(
+      "useAuth must be used inside <AuthProvider>. Check main.jsx."
+    );
+  }
+  return ctx;
 }

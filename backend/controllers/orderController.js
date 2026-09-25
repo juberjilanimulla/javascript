@@ -1,11 +1,10 @@
 import { pool } from "../db.js";
-import ApiError from "../utils/apiError.js";
-import sendResponse from "../helpers/serverResponse.js";
+import {successResponse,errorResponse} from "../helpers/serverResponse.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 
 export const getOrders = asyncHandler(async (req, res) => {
   const [rows] = await pool.query("CALL sp_get_orders()");
-  return sendResponse(res, 200, "Orders fetched", rows?.[0] || []);
+  return successResponse(res, 200, "Orders fetched", rows?.[0] || []);
 });
 
 export const createOrder = asyncHandler(async (req, res) => {
@@ -22,7 +21,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     status || "pending",
   ]);
 
-  return sendResponse(res, 201, "Order created", { id: result?.[0]?.[0]?.id || null });
+  return successResponse(res, 201, "Order created", { id: result?.[0]?.[0]?.id || null });
 });
 
 export const updateOrder = asyncHandler(async (req, res) => {
@@ -41,11 +40,11 @@ export const updateOrder = asyncHandler(async (req, res) => {
     status || "pending",
   ]);
 
-  return sendResponse(res, 200, "Order updated", { id: Number(id) });
+  return successResponse(res, 200, "Order updated", { id: Number(id) });
 });
 
 export const deleteOrder = asyncHandler(async (req, res) => {
   const { id } = req.params;
   await pool.query("CALL sp_delete_order(?)", [id]);
-  return sendResponse(res, 200, "Order deleted", { id: Number(id) });
+  return successResponse(res, 200, "Order deleted", { id: Number(id) });
 });

@@ -1,21 +1,17 @@
-export function successResponse(response, statusCode = 200, message = "Success", data = null) {
-  return response.status(statusCode).json({
-    status: statusCode,
+export function successResponse(res, message, data = null) {
+  return res.status(200).json({
+    status: 200,
     error: false,
     message,
     data,
   });
 }
 
-export function errorResponse(response, statusCode = 500, message = "Something went wrong", data = null) {
-  return response.status(statusCode).json({
+export function errorResponse(res, statusCode, message) {
+  return res.status(statusCode).json({
     status: statusCode,
     error: true,
     message,
-    data,
+    data: null,
   });
-}
-
-export default function sendResponse(response, statusCode = 200, message = "Success", data = null) {
-  return successResponse(response, statusCode, message, data);
 }
